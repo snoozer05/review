@@ -28,7 +28,7 @@ module EPUBMaker
       @opf_manifest = opf_manifest
       @opf_toc = opf_tocx
 
-      tmplfile = File.expand_path('../../templates/opf/epubv2.opf.erb', File.dirname(__FILE__))
+      tmplfile = File.expand_path('./opf/epubv2.opf.erb', ReVIEW::Template::TEMPLATE_DIR)
       tmpl = ReVIEW::Template.load(tmplfile, 1)
       return tmpl.result(binding)
     end
