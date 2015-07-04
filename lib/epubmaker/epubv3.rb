@@ -22,23 +22,13 @@ module EPUBMaker
 
     # Return opf file content.
     def opf
-      s = <<EOT
-<?xml version="1.0" encoding="UTF-8"?>
-<package version="3.0" xmlns="http://www.idpf.org/2007/opf" unique-identifier="BookId" xml:lang="#{@producer.params["language"]}">
-  <metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf">
-EOT
+      @opf_metainfo = opf_metainfo
+      @opf_manifest = opf_manifest
+      @opf_toc = opf_tocx
 
-      s << opf_metainfo
-
-      s << %Q[  </metadata>\n]
-
-      s << opf_manifest
-      s << opf_tocx
-      s << opf_guide # same as ePUB2
-
-      s << %Q[</package>\n]
-
-      s
+      tmplfile = File.expand_path('../../templates/opf/epubv3.opf.erb', File.dirname(__FILE__))
+      tmpl = ReVIEW::Template.load(tmplfile, 1)
+      return tmpl.result(binding)
     end
 
     def opf_metainfo
@@ -169,17 +159,6 @@ EOT
       end
       s << %Q[  </spine>\n]
 
-      s
-    end
-
-    def opf_guide
-      s = ""
-      s << %Q[  <guide>\n]
-      s << %Q[    <reference type="cover" title="#{@producer.res.v("covertitle")}" href="#{@producer.params["cover"]}"/>\n]
-      s << %Q[    <reference type="title-page" title="#{@producer.res.v("titlepagetitle")}" href="titlepage.#{@producer.params["htmlext"]}"/>\n] unless @producer.params["titlepage"].nil?
-      s << %Q[    <reference type="toc" title="#{@producer.res.v("toctitle")}" href="#{@producer.params["bookname"]}-toc.#{@producer.params["htmlext"]}"/>\n]
-      s << %Q[    <reference type="colophon" title="#{@producer.res.v("colophontitle")}" href="colophon.#{@producer.params["htmlext"]}"/>\n] unless @producer.params["colophon"].nil?
-      s << %Q[  </guide>\n]
       s
     end
 
